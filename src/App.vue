@@ -26,7 +26,7 @@
   <pre>
    {{ JSON.stringify(formValues, null, 2) }}
   </pre>
-  <form>
+  <form v-on:submit="submitForm">
     <div>
       <label>
         <div>Name:</div>
@@ -157,6 +157,11 @@ export default {
       if (this.count !== 0) {
         this.count--;
       }
+    },
+
+    submitForm(event) {
+      event.preventDefault();
+      console.log("Form values", this.formValues);
     },
   },
 };
