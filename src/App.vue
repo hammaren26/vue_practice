@@ -26,14 +26,14 @@
   <pre>
    {{ JSON.stringify(formValues, null, 2) }}
   </pre>
-  <form v-on:submit="submitForm">
+  <form @submit.prevent="submitForm">
     <div>
       <label>
         <div>Name:</div>
         <input
           style="display: block"
           type="text"
-          v-model="formValues.name"
+          v-model.trim.lazy="formValues.name"
           required
         />
       </label>
@@ -112,7 +112,18 @@
         </label>
       </div>
     </div>
-    <button>submit</button>
+
+    <label>
+      <div>Age:</div>
+      <input
+        style="display: block"
+        type="number"
+        v-model.number="formValues.age"
+        @keyup.enter="submitForm"
+        required
+      />
+    </label>
+    <!-- <button>submit</button> -->
   </form>
 </template>
 
@@ -136,6 +147,7 @@ export default {
         remoteWork: "no",
         skillSet: [],
         yearsOfExperience: "",
+        age: null,
       },
     };
   },
@@ -159,8 +171,7 @@ export default {
       }
     },
 
-    submitForm(event) {
-      event.preventDefault();
+    submitForm() {
       console.log("Form values", this.formValues);
     },
   },
@@ -176,6 +187,11 @@ export default {
 .test {
   text-decoration: underline;
 }
+
+body {
+  padding-bottom: 25px;
+}
+
 .danger {
   color: red;
 }
