@@ -1,130 +1,59 @@
 <template>
-  <h1>Methods</h1>
-  <h2>{{ 2 + 3 + 5 }}</h2>
-  <h2>Add method - {{ add(1, 2, 3) }}</h2>
-  <h2>{{ multiply() }}</h2>
+  <h1>Directives</h1>
+  <h2 v-once>{{ name }}</h2>
+  <button @click="name = 'batman'">click</button>
+  <h2 v-pre>{{ name }}</h2>
   <hr />
-  <br />
-  <br />
-  <br />
 
-  <h1>Events</h1>
-  <h2>{{ name }}</h2>
-  <button @click="changeName('Superman', $event), increment()">
-    Change name
+  <h1>Computed properties</h1>
+  <h2>
+    Fullname - {{ computedProperties.firstName }}
+    {{ computedProperties.lastName }}
+  </h2>
+
+  <button @click="changeFullName">Change fullname</button>
+
+  <h2>Computed fullname - {{ fullName }}</h2>
+  <h2>
+    Total -
+    {{
+      computedProperties.items.reduce((total, curr) => {
+        return total + curr.price;
+      }, 0)
+    }}
+  </h2>
+
+  <h2>Computed total - {{ getTotal }}</h2>
+
+  <button
+    type="button"
+    @click="
+      computedProperties.items.push({ id: 4, title: 'Keyboard', price: 50 })
+    "
+  >
+    click
   </button>
-  <br />
-  <h2>count: {{ count }}</h2>
-  <button @click="increment">Icrement</button>
-  <button @click="decrement">Decrement</button>
-  <hr />
-  <br />
-  <br />
-  <br />
 
-  <h1>Form Handling</h1>
-  <pre>
-   {{ JSON.stringify(formValues, null, 2) }}
-  </pre>
-  <form @submit.prevent="submitForm">
-    <div>
-      <label>
-        <div>Name:</div>
-        <input
-          style="display: block"
-          type="text"
-          v-model.trim.lazy="formValues.name"
-          required
-        />
-      </label>
-      <label>
-        <div>Profile Summary</div>
-        <textarea v-model="formValues.profileSummary"> </textarea>
-      </label>
-      <label>
-        <div>Country</div>
-        <select name="" id="" v-model="formValues.country">
-          <option value="">Select a country</option>
-          <option value="India">India</option>
-          <option value="China">China</option>
-        </select>
-      </label>
-      <label>
-        <div>Job location</div>
-        <select multiple name="" id="" v-model="formValues.jobLocation">
-          <option value="">Select a country</option>
-          <option value="India">India</option>
-          <option value="China">China</option>
-        </select>
-      </label>
-      <label>
-        <div>Open to remove work</div>
-        <input
-          style="display: block"
-          type="checkbox"
-          v-model="formValues.remoteWork"
-          true-value="yes"
-          false-value="no"
-        />
-      </label>
+  <h2>Method Total - {{ getTotalMethod() }}</h2>
 
-      <div>
-        <h2>Skill Set</h2>
-        <label>
-          <span>html</span>
-          <input type="checkbox" value="html" v-model="formValues.skillSet" />
-        </label>
-        <label>
-          <span>css</span>
-          <input type="checkbox" value="css" v-model="formValues.skillSet" />
-        </label>
-        <label>
-          <span>js</span>
-          <input type="checkbox" value="js" v-model="formValues.skillSet" />
-        </label>
-      </div>
+  <input type="text" v-model.trim="computedProperties.country" />
 
-      <div>
-        <h2>Years of Experience</h2>
-        <label>
-          <span>0-2</span>
-          <input
-            type="radio"
-            value="0-2"
-            v-model="formValues.yearsOfExperience"
-          />
-        </label>
-        <label>
-          <span>3-5</span>
-          <input
-            type="radio"
-            value="3-5"
-            v-model="formValues.yearsOfExperience"
-          />
-        </label>
-        <label>
-          <span>6-10</span>
-          <input
-            type="radio"
-            value="6-10"
-            v-model="formValues.yearsOfExperience"
-          />
-        </label>
-      </div>
-    </div>
-
-    <label>
-      <div>Age:</div>
-      <input
-        style="display: block"
-        type="number"
-        v-model.number="formValues.age"
-        @keyup.enter="submitForm"
-        required
-      />
-    </label>
-    <!-- <button>submit</button> -->
-  </form>
+  <h2>v-for computed properties</h2>
+  <ul>
+    <li
+      :class="item.price"
+      v-for="item in computedProperties.items"
+      :key="item.id"
+    >
+      {{ item.title }} {{ item.price }}
+    </li>
+  </ul>
+  <h2>expensive items</h2>
+  <ul>
+    <li v-for="item in expensiveItems" :key="item.id">
+      {{ item.title }} {{ item.price }}
+    </li>
+  </ul>
 </template>
 
 <script>
@@ -134,45 +63,61 @@ export default {
   name: "App",
   data() {
     return {
-      baseMultiplier: 5,
-      baseValue: 2,
       name: "Slava",
-      count: 0,
-
-      formValues: {
-        name: "",
-        profileSummary: "",
+      computedProperties: {
+        firstName: "Slava",
+        lastName: "Tulaev",
         country: "",
-        jobLocation: [],
-        remoteWork: "no",
-        skillSet: [],
-        yearsOfExperience: "",
-        age: null,
+        items: [
+          {
+            id: 1,
+            title: "TV",
+            price: 100,
+          },
+          {
+            id: 2,
+            title: "Phone",
+            price: 200,
+          },
+          {
+            id: 3,
+            title: "Laptop",
+            price: 300,
+          },
+        ],
       },
     };
   },
   methods: {
-    changeName(str, event) {
-      this.name = str;
-      console.log(event);
+    getTotalMethod() {
+      console.log("get total method");
+      return this.computedProperties.items.reduce((total, curr) => {
+        return total + curr.price;
+      }, 0);
     },
-    add(a, b, c) {
-      return a + b + c;
+    changeFullName() {
+      this.fullName = "Vyacheslav Popov";
     },
-    multiply(num = this.baseValue) {
-      return num * this.baseMultiplier;
+  },
+  computed: {
+    fullName: {
+      get() {
+        return `${this.computedProperties.firstName} ${this.computedProperties.lastName}`;
+      },
+      set(value) {
+        const names = value.split(" ");
+        this.computedProperties.firstName = names[0];
+        this.computedProperties.lastName = names[1];
+      },
     },
-    increment() {
-      this.count++;
+    getTotal() {
+      console.log("get total computed properties");
+      return this.computedProperties.items.reduce((total, curr) => {
+        return total + curr.price;
+      }, 0);
     },
-    decrement() {
-      if (this.count !== 0) {
-        this.count--;
-      }
-    },
-
-    submitForm() {
-      console.log("Form values", this.formValues);
+    expensiveItems() {
+      return this.computedProperties.items.filter((item) => item.price > 100);
     },
   },
 };
