@@ -1,59 +1,23 @@
 <template>
-  <h1>Directives</h1>
-  <h2 v-once>{{ name }}</h2>
-  <button @click="name = 'batman'">click</button>
-  <h2 v-pre>{{ name }}</h2>
-  <hr />
+  <h2>Volume tracker (0 - 20)</h2>
+  <h3>current volume {{ volume }}</h3>
 
-  <h1>Computed properties</h1>
-  <h2>
-    Fullname - {{ computedProperties.firstName }}
-    {{ computedProperties.lastName }}
-  </h2>
+  <div>
+    <button @click="volume += 2">Increase</button>
+    <button @click="volume -= 2">Decrease</button>
+  </div>
+  <input type="text" v-model="movie" />
+  <input type="text" v-model="movieInfo.title" />
+  <input type="text" v-model="movieInfo.actor" />
 
-  <button @click="changeFullName">Change fullname</button>
-
-  <h2>Computed fullname - {{ fullName }}</h2>
-  <h2>
-    Total -
-    {{
-      computedProperties.items.reduce((total, curr) => {
-        return total + curr.price;
-      }, 0)
-    }}
-  </h2>
-
-  <h2>Computed total - {{ getTotal }}</h2>
-
-  <button
-    type="button"
-    @click="
-      computedProperties.items.push({ id: 4, title: 'Keyboard', price: 50 })
-    "
-  >
-    click
-  </button>
-
-  <h2>Method Total - {{ getTotalMethod() }}</h2>
-
-  <input type="text" v-model.trim="computedProperties.country" />
-
-  <h2>v-for computed properties</h2>
-  <ul>
-    <li
-      :class="item.price"
-      v-for="item in computedProperties.items"
-      :key="item.id"
-    >
-      {{ item.title }} {{ item.price }}
-    </li>
-  </ul>
-  <h2>expensive items</h2>
-  <ul>
-    <li v-for="item in expensiveItems" :key="item.id">
-      {{ item.title }} {{ item.price }}
-    </li>
-  </ul>
+  <div>
+    <button @click="movieList = movieList.concat(['Gruz 200'])">
+      add film
+    </button>
+  </div>
+  <pre>
+   {{ movieInfo }}
+  </pre>
 </template>
 
 <script>
@@ -63,61 +27,40 @@ export default {
   name: "App",
   data() {
     return {
-      name: "Slava",
-      computedProperties: {
-        firstName: "Slava",
-        lastName: "Tulaev",
-        country: "",
-        items: [
-          {
-            id: 1,
-            title: "TV",
-            price: 100,
-          },
-          {
-            id: 2,
-            title: "Phone",
-            price: 200,
-          },
-          {
-            id: 3,
-            title: "Laptop",
-            price: 300,
-          },
-        ],
+      volume: 0,
+      movie: "Batman",
+      movieInfo: {
+        title: "",
+        actor: "",
       },
+      movieList: ["Batman", "Superman"],
     };
   },
-  methods: {
-    getTotalMethod() {
-      console.log("get total method");
-      return this.computedProperties.items.reduce((total, curr) => {
-        return total + curr.price;
-      }, 0);
+  methods: {},
+  computed: {},
+  watch: {
+    volume(newValue, oldValue) {
+      if (newValue > oldValue && newValue > 16) {
+        console.log("ebat kopat zvuk menshe sdelay");
+      }
     },
-    changeFullName() {
-      this.fullName = "Vyacheslav Popov";
-    },
-  },
-  computed: {
-    fullName: {
-      get() {
-        return `${this.computedProperties.firstName} ${this.computedProperties.lastName}`;
+    movie: {
+      handler(newValue) {
+        console.log(newValue);
       },
-      set(value) {
-        const names = value.split(" ");
-        this.computedProperties.firstName = names[0];
-        this.computedProperties.lastName = names[1];
+      immediate: true,
+    },
+    movieInfo: {
+      handler(newValue) {
+        console.log(`title - ${newValue.title} actor - ${newValue.actor}`);
       },
+      deep: true,
     },
-    getTotal() {
-      console.log("get total computed properties");
-      return this.computedProperties.items.reduce((total, curr) => {
-        return total + curr.price;
-      }, 0);
-    },
-    expensiveItems() {
-      return this.computedProperties.items.filter((item) => item.price > 100);
+    movieList: {
+      handler(newValue) {
+        console.log(`Updated list: ${newValue}`);
+      },
+      // deep: true,
     },
   },
 };
